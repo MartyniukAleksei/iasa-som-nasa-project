@@ -1,32 +1,32 @@
 /**
- * js/api.js
- * Полный модуль API:
- *  - mockInfer (локальный эмулятор)
- *  - sendToModel / uploadWithProgress (для будущей интеграции)
- *  - logToGoogleSheets (опционально, POST)
- *  - fetchServerResponse / pollServerResponse (GET polling из одной Google Sheet)
+ * js/api.js — совместимый и устойчивый к CORS модуль API
  *
- * Настрой:
- *  - Поменяй GOOGLE_SHEETS_ENDPOINT (POST) и GOOGLE_SHEETS_GET_ENDPOINT (GET) на URL'ы
- *    твоего задеплоенного Google Apps Script Web App.
- *  - Если не хочешь логгировать входы — оставь GOOGLE_SHEETS_ENDPOINT пустым или placeholder.
+ * Особенности:
+ * - Сохраняет mockInfer, sendToModel, uploadWithProgress, validateResponse, logToGoogleSheets
+ * - fetchServerResponse пытается сначала fetch(), при ошибке — fallback на JSONP
+ * - pollServerResponse использует fetchServerResponse
+ *
+ * ВАЖНО:
+ * - Для JSONP Apps Script doGet должен поддерживать параметр `callback`
+ *   и возвращать JavaScript: callback({...});
+ * - Подставь свои URL в GOOGLE_SHEETS_ENDPOINT (POST, опционно) и GOOGLE_SHEETS_GET_ENDPOINT (GET).
  */
 
 /* ================= CONFIGURATION ================= */
 
-// Real model API (if будет)
+// Реальный API (опционально)
 const API_ENDPOINT = "https://your-model-api.example.com/predict";
 const API_KEY = "your-api-key-here";
 const REQUEST_TIMEOUT = 30000; // ms
 
-// Google Sheets endpoints:
-// POST endpoint (опционально) — если хочешь логгировать входные данные (в нашем новом сценарии можно оставить пустым)
+// Google Apps Script endpoints (замени на свои)
+// POST (опционально) — логирование; можно оставить placeholder если не используешь
 const GOOGLE_SHEETS_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbzBhtoJ1pvYZJmlcGBwc5Z3YUk2kE7euqbP6cZyFxDBVEG5RYLlA8M9gGDczUVKfNRY/exec"; // <-- optional (logging)
+  "https://script.google.com/macros/s/AKfycbzBhtoJ1pvYZJmlcGBwc5Z3YUk2kE7euqbP6cZyFxDBVEG5RYLlA8M9gGDczUVKfNRY/exec";
 
-// GET endpoint (обязательно для polling, Apps Script returning JSON)
+// GET (нужно для чтения ServerResponses) — подставь URL, полученный при деплое Web App
 const GOOGLE_SHEETS_GET_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbwxUNEd0DsKhZV5ZR4LhsPu2OY8xC6YZD6Iv2pDsR7n0pbH8_MqMGK4QW7rZp_n-OHN/exec"; // <-- replace with your GET URL
+  "https://script.google.com/macros/library/d/1HZQfrnjnn_OLjBzkCXK8Tp6LIusSa6gJf4ulKMftbIs8Uypy-JfgPTmy/4";
 
 // Poll defaults
 const DEFAULT_POLL_INTERVAL_MS = 10000; // 10s
@@ -34,11 +34,6 @@ const DEFAULT_POLL_TIMEOUT_MS = 120000; // 2 min
 
 /* ================= MOCK INFERENCE ================= */
 
-/**
- * mockInfer(formData)
- * Локальная эмуляция результата — удобно для dev / fallback
- * Возвращает: { probability: 0..1, summary: string, data_comments: [str...] }
- */
 async function mockInfer(formData) {
   const delay = 1000 + Math.random() * 2000;
   await new Promise((r) => setTimeout(r, delay));
@@ -82,13 +77,8 @@ async function mockInfer(formData) {
   };
 }
 
-/* ================= REAL API (file upload) - OPTIONAL ================= */
+/* ================= REAL API (optional file upload) ================= */
 
-/**
- * sendToModel(file, progressCallback)
- * Отправка файла на реальный API (если потребуется).
- * Возвращает JSON ответа или бросает ошибку.
- */
 async function sendToModel(file, progressCallback = null) {
   const formData = new FormData();
   formData.append("file", file);
@@ -99,7 +89,6 @@ async function sendToModel(file, progressCallback = null) {
 
   try {
     if (progressCallback) {
-      // use XHR-based uploader with progress
       const data = await uploadWithProgress(formData, progressCallback);
       clearTimeout(timeoutId);
       if (!validateResponse(data))
@@ -111,7 +100,6 @@ async function sendToModel(file, progressCallback = null) {
       method: "POST",
       headers: {
         Authorization: `Bearer ${API_KEY}`,
-        // don't set Content-Type (browser sets boundary)
       },
       body: formData,
       signal: controller.signal,
@@ -136,10 +124,6 @@ async function sendToModel(file, progressCallback = null) {
   }
 }
 
-/**
- * uploadWithProgress(formData, progressCallback)
- * Использует XHR для отслеживания прогресса загрузки.
- */
 function uploadWithProgress(formData, progressCallback) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -191,53 +175,49 @@ function validateResponse(data) {
   );
 }
 
-/* ================= GOOGLE SHEETS LOGGING (POST) - optional ================= */
+/* ================= GOOGLE SHEETS LOGGING (POST) ================= */
 
-/**
- * logToGoogleSheets(formData)
- * Попытка записать входные данные в Google Sheets (POST)
- * Возвращает true/false. Работа в режиме "best-effort".
- *
- * Замечание: если GOOGLE_SHEETS_ENDPOINT пустой или не заменён — функция пропускается.
- */
 async function logToGoogleSheets(formData) {
+  // Якщо не вказано endpoint або він явно містить плейсхолдер — пропускаємо лог
   if (
     !GOOGLE_SHEETS_ENDPOINT ||
-    GOOGLE_SHEETS_ENDPOINT.includes("YOUR_POST_DEPLOY_ID")
+    GOOGLE_SHEETS_ENDPOINT.includes("YOUR_POST_DEPLOY_ID") ||
+    GOOGLE_SHEETS_ENDPOINT.includes("YOUR_POST_DEPLOY_ID_HERE") ||
+    GOOGLE_SHEETS_ENDPOINT.includes("YOUR_POST_DEPLOY_URL")
   ) {
-    console.warn(
-      "GOOGLE_SHEETS_ENDPOINT не настроен — пропускаем логирование."
-    );
+    console.warn("GOOGLE_SHEETS_ENDPOINT not configured — skipping logging.");
     return false;
   }
 
   const payload = { ...formData, timestamp: new Date().toISOString() };
 
-  // Сначала пробуем нормальный fetch (чтобы прочитать ответ, если CORS настроен).
   try {
+    // Намагаємось послати у нормальному режимі (якщо CORS дозволено на сервері)
     const resp = await fetch(GOOGLE_SHEETS_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-      // normal mode; если сервер настроен корректно, вернёт JSON
     });
 
-    // Если fetch успешен (200..299) — считаем лог выполненным
     if (resp.ok) {
       console.log("Logged to Google Sheets (POST) — server responded OK.");
       return true;
     } else {
-      console.warn("POST to Google Sheets responded with status:", resp.status);
-      // как fallback попробуем no-cors (can't read response)
+      console.warn(
+        "POST to Google Sheets returned status:",
+        resp.status,
+        " — will fallback to no-cors send."
+      );
     }
   } catch (err) {
+    // звичайний POST впав (ймовірно CORS) — падаємо в no-cors
     console.warn(
       "Normal POST to Google Sheets failed (maybe CORS):",
-      err.message || err
+      err && err.message ? err.message : err
     );
   }
 
-  // fallback: попытка в режиме no-cors — запишет, но нельзя прочитать ответ
+  // fallback: send no-cors (fire-and-forget). Браузер не дозволить читати відповідь.
   try {
     await fetch(GOOGLE_SHEETS_ENDPOINT, {
       method: "POST",
@@ -245,53 +225,134 @@ async function logToGoogleSheets(formData) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    console.log("Logged to Google Sheets (POST) via no-cors (assumed).");
+    console.log("logToGoogleSheets: POST sent (no-cors).");
     return true;
   } catch (err) {
-    console.error("Failed to log to Google Sheets even with no-cors:", err);
+    console.error(
+      "logToGoogleSheets: failed to send POST (no-cors):",
+      err && err.message ? err.message : err
+    );
     return false;
   }
 }
 
-/* ================= GOOGLE SHEETS POLLING (GET) ================= */
+/* ================= GOOGLE SHEETS FETCH (with JSONP fallback) ================= */
 
 /**
  * fetchServerResponse(object_id)
- * GET к Apps Script. Ожидает JSON вида:
- * - { status: "pending" }
- * - { object_id: "...", procent: 87.2, timestamp: "..." }
+ *  - tries to fetch via standard fetch()
+ *  - if fetch fails due to network/CORS, falls back to JSONP (inserts <script>)
+ *
+ * Expected Apps Script responses:
+ *  - JSON mode: { status: "pending" } OR { object_id: "...", procent: 87.2, timestamp: "..." }
+ *  - JSONP mode (when ?callback=cb supplied): cb({...});
+ *
+ * NOTE: For JSONP fallback to work, your Apps Script doGet must support `callback` param
+ * and return JavaScript when callback is present.
  */
 async function fetchServerResponse(object_id) {
+  // Перевірка — якщо endpoint не вказано або залишено плейсхолдер, кидаємо зрозумілу помилку
   if (
     !GOOGLE_SHEETS_GET_ENDPOINT ||
-    GOOGLE_SHEETS_GET_ENDPOINT.includes("YOUR_GET_DEPLOY_ID")
+    GOOGLE_SHEETS_GET_ENDPOINT.includes("YOUR_GET_DEPLOY_ID") ||
+    GOOGLE_SHEETS_GET_ENDPOINT.includes("YOUR_GET_DEPLOY_ID_HERE") ||
+    GOOGLE_SHEETS_GET_ENDPOINT.includes("YOUR_GET_DEPLOY_URL")
   ) {
-    throw new Error("GOOGLE_SHEETS_GET_ENDPOINT не настроен (в api.js).");
+    throw new Error("GOOGLE_SHEETS_GET_ENDPOINT not configured in api.js.");
   }
 
-  const url = `${GOOGLE_SHEETS_GET_ENDPOINT}?object_id=${encodeURIComponent(
-    object_id
-  )}&ts=${Date.now()}`;
+  // Спробуємо JSONP (обхід CORS). Це основний шлях, якщо doGet підтримує callback.
+  try {
+    const data = await fetchServerResponseJSONP(object_id);
+    return data;
+  } catch (jsonpErr) {
+    console.warn(
+      "JSONP attempt failed, trying fetch() fallback:",
+      jsonpErr && jsonpErr.message ? jsonpErr.message : jsonpErr
+    );
+    // fallback: спробувати звичайний fetch (якщо Apps Script має CORS або ти поставив proxy)
+    const url = `${GOOGLE_SHEETS_GET_ENDPOINT}?object_id=${encodeURIComponent(
+      object_id
+    )}&ts=${Date.now()}`;
+    const res = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+    });
 
-  const res = await fetch(url, {
-    method: "GET",
-    cache: "no-store",
-    headers: { Accept: "application/json" },
-  });
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      throw new Error(`GET failed (${res.status}): ${txt}`);
+    }
 
-  if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    throw new Error(`GET failed (${res.status}): ${txt}`);
+    return await res.json();
   }
-
-  const data = await res.json();
-  return data;
 }
 
 /**
+ * fetchServerResponseJSONP(object_id)
+ * Inserts a script tag with callback to get around CORS.
+ * Resolves with the parsed object or rejects on error/timeout.
+ */
+function fetchServerResponseJSONP(object_id, timeoutMs = 15000) {
+  return new Promise((resolve, reject) => {
+    if (!GOOGLE_SHEETS_GET_ENDPOINT) {
+      return reject(new Error("GOOGLE_SHEETS_GET_ENDPOINT not configured."));
+    }
+
+    const callbackName = "gs_cb_" + Math.random().toString(36).slice(2, 10);
+    let script = null;
+    let timeoutId = null;
+
+    const cleanup = () => {
+      if (script && script.parentNode) script.parentNode.removeChild(script);
+      try {
+        delete window[callbackName];
+      } catch (e) {
+        window[callbackName] = undefined;
+      }
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+
+    // timeout guard
+    timeoutId = setTimeout(() => {
+      cleanup();
+      reject(new Error("JSONP request timed out"));
+    }, timeoutMs);
+
+    window[callbackName] = (data) => {
+      cleanup();
+      resolve(data);
+    };
+
+    const sep = GOOGLE_SHEETS_GET_ENDPOINT.includes("?") ? "&" : "?";
+    // Передаём object_id и callback; ts чтобы избежать кеша
+    const url = `${GOOGLE_SHEETS_GET_ENDPOINT}${sep}object_id=${encodeURIComponent(
+      object_id
+    )}&callback=${callbackName}&ts=${Date.now()}`;
+    script = document.createElement("script");
+    script.src = url;
+    script.async = true;
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("JSONP script load error"));
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
+/* ================= POLLING ================= */
+
+/**
  * pollServerResponse(object_id, options)
- * Периодически опрашивает fetchServerResponse до появления numeric `procent`.
- * options: { interval, timeout, onPending, onError }
+ * Repeatedly calls fetchServerResponse until response.procent is found or timeout.
+ *
+ * options:
+ *   interval: ms between attempts (default DEFAULT_POLL_INTERVAL_MS)
+ *   timeout: total timeout ms (default DEFAULT_POLL_TIMEOUT_MS)
+ *   onPending: fn invoked when response indicates pending
+ *   onError: fn invoked on fetch/jsonp/network error
  */
 async function pollServerResponse(object_id, options = {}) {
   const interval = options.interval || DEFAULT_POLL_INTERVAL_MS;
@@ -315,12 +376,11 @@ async function pollServerResponse(object_id, options = {}) {
         return data;
       }
 
-      // otherwise pending
       onPending();
     } catch (err) {
       onError(err);
       console.warn(
-        "Polling attempt failed (will retry):",
+        "pollServerResponse attempt error, will retry:",
         err && err.message ? err.message : err
       );
     }
