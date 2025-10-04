@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Advanced exoplanet detection for researchers - Enter observational data for AI analysis"
+    />
+    <title>For Researchers - NASA Exoplanet Detection</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/researchers.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-container">
+        <div class="logo-container">
+          <a
+            href="index.html"
+            style="
+              display: flex;
+              align-items: center;
+              gap: var(--spacing-sm);
+              text-decoration: none;
+            "
+          >
+            <img
+              src="svg/nasa-svgrepo-com.svg"
+              alt="NASA Logo"
+              width="50"
+              height="50"
+            />
+            <span class="logo-text">Exoplanet Detection</span>
+          </a>
+        </div>
+
+        <button
+          class="nav-toggle"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+
+        <nav class="main-nav" aria-label="Main navigation">
+          <ul>
+            <li><a href="researchers.html">For researchers</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Advanced Exoplanet Analysis</h1>
+      <p class="page-subtitle">
+        Enter your observational data for comprehensive AI-powered analysis. Our
+        system evaluates transit parameters and calculates the probability of
+        exoplanet presence with detailed technical observations.
+      </p>
+
+      <section class="instructions-section">
+        <h2>How to Use This Tool</h2>
+        <ol class="instructions-list">
+          <li>
+            Enter all required observational parameters for your candidate
+            exoplanet
+          </li>
+          <li>
+            Ensure numerical values are within valid ranges (hover over labels
+            for units)
+          </li>
+          <li>
+            Click "Submit Data" to analyze the parameters with our AI model
+          </li>
+          <li>
+            Review the probability score and detailed technical observations
+          </li>
+          <li>Download or copy the results for your research</li>
+        </ol>
+
+        <div class="accepted-formats">
+          <span class="format-badge">Transit Depth</span>
+          <span class="format-badge">Orbital Period</span>
+          <span class="format-badge">Stellar Parameters</span>
+          <span class="format-badge">All Fields Required</span>
+        </div>
+      </section>
+
+      <section class="upload-section">
+        <form id="exoplanetForm" class="exoplanet-form card">
+          <div class="form-grid">
+            <div class="form-group">
+              <label
+                for="object_id"
+                title="Unique identifier for the target object"
+                >Object ID *</label
+              >
+              <input
+                type="text"
+                id="object_id"
+                name="object_id"
+                placeholder="e.g., KOI-123"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label
+                for="transit_depth"
+                title="Transit depth in parts per million (ppm)"
+                >Transit Depth (ppm) *</label
+              >
+              <input
+                type="number"
+                id="transit_depth"
+                name="transit_depth"
+                placeholder="e.g., 5000"
+                step="0.01"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="orbital_period" title="Orbital period in days"
+                >Orbital Period (days) *</label
+              >
+              <input
+                type="number"
+                id="orbital_period"
+                name="orbital_period"
+                placeholder="e.g., 3.5"
+                step="0.0001"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="transit_duration" title="Transit duration in hours"
+                >Transit Duration (hours) *</label
+              >
+              <input
+                type="number"
+                id="transit_duration"
+                name="transit_duration"
+                placeholder="e.g., 2.5"
+                step="0.01"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="snr" title="Signal-to-noise ratio">SNR *</label>
+              <input
+                type="number"
+                id="snr"
+                name="snr"
+                placeholder="e.g., 12.5"
+                step="0.1"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group" style="display: none">
+              <label for="planet_radius" title="Planet radius in Earth radii"
+                >Planet Radius (R⊕) *</label
+              >
+              <input
+                type="number"
+                id="planet_radius"
+                name="planet_radius"
+                placeholder="e.g., 1.2"
+                step="0.01"
+                min="0"
+                value="1.0"
+              />
+            </div>
+
+            <div class="form-group" style="display: none">
+              <label
+                for="semi_major_axis"
+                title="Semi-major axis in astronomical units"
+                >Semi-Major Axis (AU) *</label
+              >
+              <input
+                type="number"
+                id="semi_major_axis"
+                name="semi_major_axis"
+                placeholder="e.g., 0.05"
+                step="0.0001"
+                min="0"
+                value="0.05"
+              />
+            </div>
+
+            <div class="form-group" style="display: none">
+              <label
+                for="eq_temperature"
+                title="Equilibrium temperature in Kelvin"
+                >Eq. Temperature (K) *</label
+              >
+              <input
+                type="number"
+                id="eq_temperature"
+                name="eq_temperature"
+                placeholder="e.g., 1200"
+                step="1"
+                min="0"
+                value="1200"
+              />
+            </div>
+
+            <div class="form-group" style="display: none">
+              <label
+                for="impact_parameter"
+                title="Impact parameter (0-1, unitless)"
+                >Impact Parameter *</label
+              >
+              <input
+                type="number"
+                id="impact_parameter"
+                name="impact_parameter"
+                placeholder="e.g., 0.5"
+                step="0.01"
+                min="0"
+                max="1"
+                value="0.5"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="stellar_radius" title="Stellar radius in Solar radii"
+                >Stellar Radius (R☉) *</label
+              >
+              <input
+                type="number"
+                id="stellar_radius"
+                name="stellar_radius"
+                placeholder="e.g., 1.0"
+                step="0.01"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="stellar_mass" title="Stellar mass in Solar masses"
+                >Stellar Mass (M☉) *</label
+              >
+              <input
+                type="number"
+                id="stellar_mass"
+                name="stellar_mass"
+                placeholder="e.g., 1.0"
+                step="0.01"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label
+                for="stellar_temp"
+                title="Stellar effective temperature in Kelvin"
+                >Stellar Temp (K) *</label
+              >
+              <input
+                type="number"
+                id="stellar_temp"
+                name="stellar_temp"
+                placeholder="e.g., 5778"
+                step="1"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="stellar_magnitude" title="Apparent visual magnitude"
+                >Stellar Magnitude *</label
+              >
+              <input
+                type="number"
+                id="stellar_magnitude"
+                name="stellar_magnitude"
+                placeholder="e.g., 12.5"
+                step="0.01"
+                required
+              />
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: var(--spacing-lg)">
+            <button type="submit" class="btn btn-primary btn-large">
+              Submit Data
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section
+        id="processingSection"
+        class="processing-section"
+        style="display: none"
+      >
+        <div class="card">
+          <div class="spinner"></div>
+          <p class="loading-text" id="progressText">Processing data...</p>
+          <div class="progress-container" style="display: none">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <p
+            class="progress-percentage"
+            id="progressPercentage"
+            style="display: none"
+          >
+            0%
+          </p>
+        </div>
+      </section>
+
+      <section
+        id="resultsSection"
+        class="results-section"
+        style="display: none"
+      >
+        <div class="results-card">
+          <h2 class="results-title">Analysis Results</h2>
+          <div
+            id="probabilityDisplay"
+            class="probability-display"
+            role="status"
+            aria-live="polite"
+          >
+            87%
+          </div>
+          <div class="probability-label">
+            Probability of Exoplanet Detection
+          </div>
+          <div id="summaryText" class="summary-text">
+            High likelihood of exoplanet-like signals based on periodic transit
+            features.
+          </div>
+        </div>
+
+        <div class="data-comments card">
+          <h3>Technical Observations</h3>
+          <div id="commentsContainer">
+            <ul>
+              <li>Loading...</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="actionButtons" class="action-buttons">
+          <button
+            class="btn btn-primary"
+            onclick="researcherActions.downloadResults()"
+          >
+            Download JSON
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="researcherActions.copyResults()"
+          >
+            Copy to Clipboard
+          </button>
+          <button
+            class="btn btn-outline"
+            onclick="researcherActions.analyzeAnother()"
+          >
+            Analyze Another Object
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="card"
+        style="
+          background: var(--light-bg);
+          border-left: 4px solid var(--nasa-blue);
+        "
+      >
+        <h2
+          style="
+            color: var(--nasa-blue);
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-md);
+          "
+        >
+          About the AI Model
+        </h2>
+        <p style="color: var(--dark-text); margin-bottom: var(--spacing-sm)">
+          Our neural network has been trained on thousands of confirmed
+          exoplanet detections from NASA's Kepler, K2 and TESS missions. The
+          model evaluates observational parameters including:
+        </p>
+        <ul
+          style="
+            color: var(--gray-text);
+            padding-left: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+          "
+        >
+          <li>Transit depth and duration characteristics</li>
+          <li>Signal-to-noise ratio and data quality metrics</li>
+          <li>Orbital parameters and planetary properties</li>
+          <li>Stellar parameters and system configuration</li>
+        </ul>
+      </section>
+
+      <div
+        id="resultsAnnounce"
+        role="status"
+        aria-live="polite"
+        class="sr-only"
+      ></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <p><strong>Created by IASA_SOM</strong></p>
+        <p>&copy; 2025 NASA Exoplanet Detection Platform</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/researchers.js"></script>
+  </body>
+</html>

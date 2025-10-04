@@ -1,0 +1,288 @@
+/**
+ * Styles specific to the Researchers page
+ * Handles file upload UI, results display, and data visualization
+ */
+
+.upload-section {
+  margin: var(--spacing-xl) 0;
+}
+
+.upload-zone {
+  border: 3px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+  background-color: var(--nasa-white);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--nasa-blue);
+  background-color: rgba(11, 61, 145, 0.02);
+}
+
+.upload-zone-icon {
+  font-size: 3rem;
+  color: var(--nasa-blue);
+  margin-bottom: var(--spacing-md);
+}
+
+.upload-zone-text {
+  font-size: 1.125rem;
+  color: var(--dark-text);
+  margin-bottom: var(--spacing-sm);
+}
+
+.upload-zone-subtext {
+  font-size: 0.875rem;
+  color: var(--gray-text);
+  margin-bottom: var(--spacing-lg);
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.file-info {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--light-bg);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--nasa-blue);
+}
+
+.file-info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+}
+
+.file-info-label {
+  font-weight: 600;
+  color: var(--dark-text);
+}
+
+.file-info-value {
+  color: var(--gray-text);
+}
+
+.processing-section {
+  margin: var(--spacing-xl) 0;
+  text-align: center;
+}
+
+.progress-percentage {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--nasa-blue);
+  margin-top: var(--spacing-sm);
+}
+
+.results-section {
+  margin: var(--spacing-xl) 0;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.results-card {
+  background: linear-gradient(135deg, var(--nasa-blue) 0%, #0d4ba8 100%);
+  color: var(--nasa-white);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 8px 24px rgba(11, 61, 145, 0.3);
+}
+
+.results-title {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-lg);
+  font-weight: 600;
+}
+
+.probability-display {
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: var(--spacing-lg) 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.probability-label {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  margin-bottom: var(--spacing-xl);
+}
+
+.summary-text {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.data-comments {
+  background-color: var(--nasa-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.data-comments h3 {
+  color: var(--nasa-blue);
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.data-comments ul {
+  list-style: none;
+  padding: 0;
+}
+
+.data-comments li {
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  border-left: 3px solid var(--nasa-blue);
+  padding-left: var(--spacing-md);
+  background-color: var(--light-bg);
+  border-radius: var(--radius-sm);
+}
+
+.data-comments li::before {
+  content: "•";
+  color: var(--nasa-red);
+  font-weight: 700;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.instructions-section {
+  background-color: var(--nasa-white);
+  border-left: 4px solid var(--nasa-red);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.instructions-section h2 {
+  color: var(--nasa-blue);
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.instructions-list {
+  padding-left: var(--spacing-lg);
+  color: var(--dark-text);
+}
+
+.instructions-list li {
+  margin-bottom: var(--spacing-sm);
+}
+
+.accepted-formats {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--spacing-md);
+}
+
+.format-badge {
+  background-color: var(--light-bg);
+  color: var(--nasa-blue);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+}
+
+.exoplanet-form {
+  background-color: var(--nasa-white);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--dark-text);
+  margin-bottom: var(--spacing-xs);
+  cursor: help;
+}
+
+.form-group input {
+  padding: var(--spacing-sm);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: border-color var(--transition-fast);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--nasa-blue);
+  box-shadow: 0 0 0 3px rgba(11, 61, 145, 0.1);
+}
+
+.form-group input:invalid:not(:placeholder-shown) {
+  border-color: var(--error-red);
+}
+
+.form-group input::placeholder {
+  color: var(--gray-text);
+  opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .probability-display {
+    font-size: 3.5rem;
+  }
+
+  .results-card {
+    padding: var(--spacing-lg);
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+  }
+}

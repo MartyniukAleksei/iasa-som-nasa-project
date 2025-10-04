@@ -1,0 +1,424 @@
+/**
+ * Global Styles for NASA Exoplanet Detection UI
+ * Uses NASA color palette and responsive design principles
+ */
+
+:root {
+  /* NASA Color Palette */
+  --nasa-blue: #0b3d91;
+  --nasa-red: #fc3d21;
+  --nasa-white: #ffffff;
+  --light-bg: #f4f7fb;
+  --dark-text: #1a1a1a;
+  --gray-text: #666666;
+  --border-color: #d1d5db;
+  --success-green: #22c55e;
+  --warning-yellow: #f59e0b;
+  --error-red: #ef4444;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--dark-text);
+  background-color: var(--light-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Global Header Styles */
+.site-header {
+  background-color: var(--nasa-blue);
+  color: var(--nasa-white);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.logo-container img {
+  height: 75px;
+  width: auto;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--nasa-white);
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--nasa-white);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+}
+
+.nav-toggle:focus {
+  outline: 2px solid var(--nasa-red);
+  outline-offset: 2px;
+}
+
+.main-nav ul {
+  display: flex;
+  list-style: none;
+  gap: var(--spacing-lg);
+}
+
+.main-nav a {
+  color: var(--nasa-white);
+  text-decoration: none;
+  font-weight: 500;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.main-nav a:hover,
+.main-nav a:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.main-nav a:focus-visible {
+  outline: 2px solid var(--nasa-red);
+  outline-offset: 2px;
+}
+
+/* Main Content Area */
+main {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+/* Global Footer Styles */
+.site-footer {
+  background-color: var(--nasa-blue);
+  color: var(--nasa-white);
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: center;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-content p {
+  margin: var(--spacing-xs) 0;
+  font-size: 0.9rem;
+}
+
+/* Card Component */
+.card {
+  background: var(--nasa-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Button Styles */
+.btn {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--nasa-red);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background-color: var(--nasa-red);
+  color: var(--nasa-white);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #e03618;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(252, 61, 33, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--nasa-blue);
+  color: var(--nasa-white);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #093175;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid var(--nasa-blue);
+  color: var(--nasa-blue);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--nasa-blue);
+  color: var(--nasa-white);
+}
+
+.btn-large {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: 1.125rem;
+}
+
+/* Page Title */
+.page-title {
+  font-size: 2.5rem;
+  color: var(--nasa-blue);
+  margin-bottom: var(--spacing-md);
+  font-weight: 700;
+}
+
+.page-subtitle {
+  font-size: 1.125rem;
+  color: var(--gray-text);
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.8;
+}
+
+/* Alert Messages */
+.alert {
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+}
+
+.alert-error {
+  background-color: #fee;
+  border-left: 4px solid var(--error-red);
+  color: #991b1b;
+}
+
+.alert-success {
+  background-color: #efe;
+  border-left: 4px solid var(--success-green);
+  color: #166534;
+}
+
+.alert-warning {
+  background-color: #fef3cd;
+  border-left: 4px solid var(--warning-yellow);
+  color: #92400e;
+}
+
+.alert-info {
+  background-color: #dbeafe;
+  border-left: 4px solid var(--nasa-blue);
+  color: #1e3a8a;
+}
+
+/* Loading Spinner */
+.spinner {
+  border: 4px solid var(--light-bg);
+  border-top: 4px solid var(--nasa-blue);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
+.loading-text {
+  margin-top: var(--spacing-md);
+  color: var(--gray-text);
+  font-size: 1.125rem;
+}
+
+/* Progress Bar */
+.progress-container {
+  width: 100%;
+  background-color: var(--light-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: var(--spacing-md) 0;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: var(--nasa-blue);
+  transition: width var(--transition-normal);
+}
+
+/* Form Elements */
+input[type="text"],
+input[type="search"],
+select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: border-color var(--transition-fast);
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--nasa-blue);
+  box-shadow: 0 0 0 3px rgba(11, 61, 145, 0.1);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+  color: var(--dark-text);
+}
+
+/* Hidden Visually (for screen readers) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: block;
+  }
+
+  .main-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--nasa-blue);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-normal);
+  }
+
+  .main-nav.active {
+    max-height: 300px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .main-nav ul {
+    flex-direction: column;
+    padding: var(--spacing-md);
+    gap: 0;
+  }
+
+  .main-nav li {
+    width: 100%;
+  }
+
+  .main-nav a {
+    display: block;
+    padding: var(--spacing-sm);
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  main {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+}
+
+/* No JavaScript Fallback */
+.no-js-message {
+  display: none;
+  background-color: var(--warning-yellow);
+  color: var(--dark-text);
+  padding: var(--spacing-md);
+  text-align: center;
+  font-weight: 600;
+}
+
+body.no-js .no-js-message {
+  display: block;
+}
+
+body.no-js main {
+  display: none;
+}
